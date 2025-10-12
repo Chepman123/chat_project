@@ -1,6 +1,7 @@
 import { Request,Response } from "express";
-import { Connection } from "mysql2/typings/mysql/lib/Connection";
+
 import bcrypt from 'bcrypt';
+import { Connection } from 'mysql2/typings/mysql/lib/Connection';
 
 export default (req:Request,res:Response,db:Connection)=>{
    const sql:string = `SELECT password FROM users WHERE username = '${req.body.login}'`;

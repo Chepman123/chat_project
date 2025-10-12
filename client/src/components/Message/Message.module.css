@@ -1,0 +1,22 @@
+.div{
+    display: block;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    margin-left: 100px;
+    margin-right: 100px;
+    color: white;
+    width: 20%;
+    border-radius: 20px;
+    z-index: 4;
+}
+.content{
+    margin-left: 20px;
+}
+.name{
+    margin-left: 20px;
+    opacity: 0.7;
+}
+.time{
+    margin-left: 80%;
+    opacity: 0.5;
+}

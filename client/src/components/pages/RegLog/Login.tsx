@@ -28,7 +28,7 @@ export default function Login(){
         setStauts(result);
         if(result){
              setCookie('user', login);;
-             navigate('/chat');
+             navigate('/contacts');
         }
     }
     return(

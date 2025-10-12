@@ -36,7 +36,8 @@ export default function Registration(){
             })
         })
         setCookie('user', login);
-        if(await response.json()) navigate('/chat');
+        if(await response.json()) navigate('/contacts');
+        else setStatus(false);
     }
     return (
         <div className={classes.div}>
