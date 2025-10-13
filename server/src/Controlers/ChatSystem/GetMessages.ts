@@ -45,15 +45,19 @@ export default async (req: Request, res: Response, db: Connection) => {
     const messages = await queryAsync(
       db,
       `SELECT m.content,
-              HOUR(m.created_at) AS hour,
-              MINUTE(m.created_at) AS minute,
-              u.username
-       FROM messages m
-       JOIN users u ON m.sender_id = u.id
-       WHERE chat_id = ?`,
+       m.id,
+       HOUR(m.created_at) AS hour,
+       MINUTE(m.created_at) AS minute,
+       u.username
+FROM messages m
+JOIN users u ON m.sender_id = u.id
+WHERE m.chat_id = ?
+ORDER BY m.id ASC;
+
+       `,
       [chatId]
     );
-
+   console.log(messages);
     const contacts = await queryAsync(db, `SELECT username FROM users`);
     res.json({ messages, contacts,chatId });
 

@@ -1,18 +1,20 @@
 import { Request,Response } from "express";
 
-import bcrypt from 'bcrypt';
 import { Connection } from 'mysql2/typings/mysql/lib/Connection';
+import LoginService from "../../Services/LoginService";
 
-export default (req:Request,res:Response,db:Connection)=>{
-   const sql:string = `SELECT password FROM users WHERE username = '${req.body.login}'`;
-   db.query(sql,async(error:Error,result:any)=>{
-      if(result.length==0)
-      { 
-        res.json(false);
-        return;
-      }
-      const matched:boolean = await bcrypt.compare(req.body.password,result[0].password)
-      
-      res.json(matched);
-   });
+export default class LoginContoller{
+   constructor(private serv:LoginService){}
+  async Login(req:Request,res:Response){
+
+   if (!req.body.login || !req.body.password) {
+  return res.status(400).json({ error: "Missing login or password" });
+   }
+   try{
+   res.json(await this.serv.login(req.body.login,req.body.password));
+   }
+   catch(error){
+      res.status(500).json({error:error});
+   }
+}
 }

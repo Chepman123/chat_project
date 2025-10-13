@@ -1,8 +1,12 @@
 import { getCookie } from '../../../utils/cookies';
-
+import MainChat from './MainChat'
 
 //SendMessage
-export async function SendMessage(message:string,chatId:number) {
+export async function SendMessage(message:string,chatId:number, setContacts: (contacts: any[]) => void,
+  setChat: (chatId: number) => void,
+  setMessages: (messages: any) => void,
+  secondLogin:string,
+ setMessage: (message: string) => void) {
 
     fetch('http://localhost:5000/chat',{
       method:'POST',
@@ -13,6 +17,8 @@ export async function SendMessage(message:string,chatId:number) {
         chatId:chatId
       })
     })
+    setMessage('');
+    getMessages(setContacts,setChat,setMessages,secondLogin);
   }
 
 

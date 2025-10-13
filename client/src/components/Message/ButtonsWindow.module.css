@@ -1,0 +1,18 @@
+.div{
+    position: absolute;
+    margin-top: -180px;
+    margin-left: 120px;
+}
+.button{
+    background-color: blueviolet;
+    color: white;
+    border: none;
+
+    font-size: 112.5%;
+    width: 100px;
+    height: 50px;
+}
+.button:hover{
+    cursor: pointer;
+     background-color: rgb(125, 38, 207);
+}

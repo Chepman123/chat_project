@@ -6,6 +6,7 @@ import classes from './MainChat.module.css';
 import Message from '../../Message/Message';
 import ScrollToDown from '../../ScrollToDown';
 
+
 export default function MainChat(){
   const [contacts,setContacts] = useState<any[]>([]);
      const[message,setMessage]=useState<string>('');
@@ -16,6 +17,7 @@ export default function MainChat(){
   function changeMessage(event:ChangeEvent<HTMLInputElement>):void{
      setMessage(event.target.value);
   }
+  
 
   useEffect(()=>{
       getMessages(setContacts,setChat, setMessages,typeof login === "string"?login:'');
@@ -38,7 +40,7 @@ export default function MainChat(){
     </form>
     <div className={classes.inputsDiv}>
       <input type='text' placeholder='Message' value={message} onChange={changeMessage} />
-      <button className={classes.button} type="button" onClick={()=>SendMessage(message,chat)}>Send</button>
+      <button className={classes.button} type="button" onClick={()=>SendMessage(message,chat,setContacts,setChat, setMessages,typeof login === "string"?login:'',setMessage)}>Send</button>
       </div>
     </div>)
 }
