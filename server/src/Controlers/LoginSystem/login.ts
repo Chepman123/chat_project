@@ -3,7 +3,7 @@ import { Request,Response } from "express";
 import { Connection } from 'mysql2/typings/mysql/lib/Connection';
 import LoginService from "../../Services/LoginService";
 
-export default class LoginContoller{
+export default class LoginController{
    constructor(private serv:LoginService){}
   async Login(req:Request,res:Response){
 

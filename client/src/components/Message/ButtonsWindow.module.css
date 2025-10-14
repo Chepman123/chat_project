@@ -2,6 +2,7 @@
     position: absolute;
     margin-top: -180px;
     margin-left: 120px;
+    z-index: 3;
 }
 .button{
     background-color: blueviolet;
