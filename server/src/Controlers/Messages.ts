@@ -26,7 +26,7 @@ export default class MessagesController {
 
     async SendMessage(req: Request, res: Response) {
         try{
-        await this.serv.Send(req.body.username, req.body.chatId, req.body.Message);
+        await this.serv.Send(req.body.username, req.body.chatId, req.body.Message,req.body.image);
         res.sendStatus(200);
         }
         catch(error){
@@ -36,9 +36,11 @@ export default class MessagesController {
 
     async GetMessages(req: Request, res: Response) {
         try{
+            
         const data = await this.serv.getMessages(
             req.query.user1 as string,
-            req.query.user2 as string
+            req.query.user2 as string,
+            req.query.page as string
         );
         res.json(data);
         }

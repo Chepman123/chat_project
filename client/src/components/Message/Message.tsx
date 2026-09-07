@@ -50,7 +50,7 @@ export default function Message({ mess}: { mess: any}) {
 
     return (
         <div
-            className={classes.div}
+            className={!mess.image?classes.div:classes.divImage}
             style={
                 (getCookie('user') === mess.username
                     ? { justifySelf: 'end', backgroundColor: 'rgb(109, 70, 145)' }
@@ -72,6 +72,8 @@ export default function Message({ mess}: { mess: any}) {
                     ︙
                 </button>
             </div>
+            {mess.image &&
+            <img src={mess.image}/>}
             <h2 className={classes.content} style={(!showInput?{display:'block'}:{display:'none'})}>{content}</h2>
             <div className={classes.inputClass} style={(showInput?{display:'flex'}:{display:'none'})as CSSProperties}>
                 <input type='text' value={content} onChange={changeText}/>

@@ -1,69 +1,71 @@
-import { Connection, QueryError, FieldPacket } from "mysql2";
-
+import db from '../db'
 export default class ChatService {
-    constructor(private db: Connection) {}
 
     async Delete(id: number): Promise<void> {
-        const sql = 'DELETE FROM messages WHERE id = ?';
-        await this.queryAsync(sql, [id]);
+        const sql = 'DELETE FROM messages WHERE id = $1';
+        await db.query(sql,[id]);
     }
 
     async Edit(id: number, content: string): Promise<void> {
-        const sql = 'UPDATE messages SET content=? WHERE id = ?';
-        await this.queryAsync(sql, [content, id]);
+        const sql = 'UPDATE messages SET content=$1 WHERE id = $2';
+        await db.query(sql, [content, id]);
     }
 
-    async Send(login: string, chatId: number, message: string): Promise<void> {
-        const selectSql = 'SELECT id FROM users WHERE username = ?';
-        const [user] = await this.queryAsync(selectSql, [login]);
+    async Send(login: string, chatId: number, message: string,image:string): Promise<void> {
+        const selectSql = 'SELECT id FROM users WHERE username = $1';
+        const [user] = (await db.query(selectSql, [login])).rows;
         if (!user) throw new Error("User not found");
 
-        const insertSql = 'INSERT INTO messages(chat_id, sender_id, content) VALUES (?,?,?)';
-        await this.queryAsync(insertSql, [chatId, user.id, message]);
+        const insertSql = 'INSERT INTO messages(chat_id, sender_id, content,image) VALUES ($1,$2,$3,$4)';
+        await db.query(insertSql, [chatId, user.id, message,image]);
     }
 
-    async getMessages(user1: string, user2: string): Promise<any> {
+    async getMessages(user1: string, user2: string,currentPage:string): Promise<any> {
         try {
             if (!user1 || !user2) return null;
 
-            const [user1Result] = await this.queryAsync(
-                `SELECT id FROM users WHERE username = ?`, [user1]
-            );
-            const [user2Result] = await this.queryAsync(
-                `SELECT id FROM users WHERE username = ?`, [user2]
-            );
+            const [user1Result] = (await db.query(
+                `SELECT id FROM users WHERE username = $1`, [user1]
+            )).rows;
+            const [user2Result] = (await db.query(
+                `SELECT id FROM users WHERE username = $1`, [user2]
+            )).rows;
 
             if (!user1Result || !user2Result) return null;
 
             const firstLogin = user1Result.id;
             const secondLogin = user2Result.id;
 
-            const [chatResult] = await this.queryAsync(
+            const [chatResult] = (await db.query(
                 `SELECT id FROM chats WHERE 
-                 (FirstuserId = ? AND SeconduserId = ?) 
-                 OR (FirstuserId = ? AND SeconduserId = ?)`,
+                 (FirstuserId = $1 AND SeconduserId = $2) 
+                 OR (FirstuserId = $3 AND SeconduserId = $4)`,
                 [firstLogin, secondLogin, secondLogin, firstLogin]
-            );
+            )).rows;
 
             if (!chatResult) return null;
 
             const chatId = chatResult.id;
 
-            const messages = await this.queryAsync(
-                `SELECT 
-                    m.content,
-                    m.id,
-                    HOUR(m.created_at) AS hour,
-                    MINUTE(m.created_at) AS minute,
-                    u.username
-                 FROM messages m
-                 JOIN users u ON m.sender_id = u.id
-                 WHERE m.chat_id = ?
-                 ORDER BY m.id ASC`,
-                [chatId]
-            );
+            const messages = (await db.query(
+    `SELECT 
+        m.content,
+        m.id,
+        EXTRACT(HOUR FROM m.created_at) AS hour,
+        EXTRACT(MINUTE FROM m.created_at) AS minute,
+        u.username,
+        m.image
+     FROM messages m
+     JOIN users u ON m.sender_id = u.id
+     WHERE m.chat_id = $1
+     ORDER BY m.created_at DESC
+     LIMIT 20 
+     OFFSET ($2-1) * 20`,
+    [chatId,currentPage] 
+    
+)).rows;
 
-            const contacts = await this.queryAsync(`SELECT username FROM users`);
+            const contacts = (await db.query(`SELECT username FROM users`)).rows;
 
             return { messages, contacts, chatId };
 
@@ -71,14 +73,5 @@ export default class ChatService {
             console.error("getMessages error:", err);
             return null;
         }
-    }
-
-    private queryAsync(sql: string, params?: any[]): Promise<any[]> {
-        return new Promise((resolve, reject) => {
-            this.db.query(sql, params, (error: QueryError | null, results: any[], fields: FieldPacket[]) => {
-                if (error) reject(error);
-                else resolve(results);
-            });
-        });
     }
 }

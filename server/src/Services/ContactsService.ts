@@ -1,15 +1,8 @@
-import { Connection } from "mysql2/typings/mysql/lib/Connection";
-
+import db from '../db'
 export default class ContactsService{
-    constructor(private db:Connection){}
-    GetContacts(login:unknown):Promise<any>{
-         const sql:string = `SELECT username FROM users WHERE username != ?`;
-
-         return new Promise((resolve,reject)=>{
-              this.db.query(sql,[login],(error,result:any[])=>{
-               if(error) reject(error);
-           resolve(result);
-    })
-         })
+    async GetContacts(login:unknown):Promise<any[]>{
+         const sql:string = `SELECT username FROM users WHERE username != $1`;
+         
+         return (await db.query(sql,[login])).rows;
     }
 }

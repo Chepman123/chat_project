@@ -5,13 +5,17 @@
     height: 70%;
     border-radius: 20px;
 }
+@media(max-width:765px){
+    .div{
+        width: 90%;
+    }
+}
 main{
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
     height: 737px;
-    background-color: rgb(42, 20, 62);
 }
 .slogan{
     margin-top: 10%;

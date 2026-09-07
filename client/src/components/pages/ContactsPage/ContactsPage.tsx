@@ -10,6 +10,6 @@ export default function ContactsPage(){
           getContacts(setContacts);
       },[])
     return(<div className={classes.div}>
-    <Contacts contacts={contacts}/>
+    <Contacts contacts={contacts} display={true}/>
     </div>)
 }

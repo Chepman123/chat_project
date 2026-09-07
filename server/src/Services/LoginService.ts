@@ -1,34 +1,16 @@
 import { QueryError, RowDataPacket } from "mysql2";
 import bcrypt from 'bcrypt';
-import { Connection } from "mysql2/typings/mysql/lib/Connection";
-
-interface passwords extends RowDataPacket{
-    password:string
-}
+import db from '../db'
+import jwt from 'jsonwebtoken';
 
 export default class LoginService{
-    constructor(private db:Connection){}
-    async login(name:string,password:string):Promise<boolean>{
-          const sql:string = `SELECT password FROM users WHERE username = ?`;
+    async login(name:string,password:string):Promise<{result:boolean,token:string}>{
+          const sql:string = `SELECT password FROM users WHERE username = $1`;
+            const result = (await db.query(sql,[name])).rows;
+            if(result.length==0) return {result:false,token:''};
 
-          return new Promise<boolean>((resolve,reject)=>{
-            this.db.query(sql,[name],async(error:QueryError|null,result:passwords[])=>{
-              if(error)throw(error);
-              if(result.length==0)
-              { 
-                return reject(error);
-              }
-              try{
-              const matched:boolean = await bcrypt.compare(password,result[0].password)
-              
-              return resolve(matched);
-              }
-              catch(error:unknown){
-                 console.log(error);
-                 return reject(error);
-              }
-           });
-          })
-
+            const matched:boolean = await bcrypt.compare(password,result[0].password);
+            const token:string = jwt.sign({login:name},process.env.SECRET!);
+            return {result:matched,token:token};
     }
 }

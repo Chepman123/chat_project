@@ -33,7 +33,8 @@ export default function Registration(){
                 Login:login,
                 Password:password,
                 date:date
-            })
+            }),
+                credentials:'include'
         })
         setCookie('user', login);
         if(await response.json()) navigate('/contacts');

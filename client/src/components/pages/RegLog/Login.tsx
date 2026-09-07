@@ -21,7 +21,8 @@ export default function Login(){
                 body:JSON.stringify({
                     login:login,
                     password:password
-                })
+                }),
+                credentials:'include'
             }
         )
         const result:boolean = await response.json();
