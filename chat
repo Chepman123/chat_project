@@ -1,0 +1,260 @@
+--
+-- PostgreSQL database dump
+--
+
+\restrict hMpxLeIprNkqAKICVyTm8xGJThXQGJdUg4dXtCe0LLt18qbkElmcrpxggMQ8s1k
+
+-- Dumped from database version 17.5
+-- Dumped by pg_dump version 18.0
+
+-- Started on 2026-09-08 07:44:34
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 220 (class 1259 OID 98387)
+-- Name: chats; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.chats (
+    id integer NOT NULL,
+    firstuserid integer NOT NULL,
+    seconduserid integer NOT NULL
+);
+
+
+ALTER TABLE public.chats OWNER TO postgres;
+
+--
+-- TOC entry 219 (class 1259 OID 98386)
+-- Name: chats_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.chats_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.chats_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4818 (class 0 OID 0)
+-- Dependencies: 219
+-- Name: chats_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.chats_id_seq OWNED BY public.chats.id;
+
+
+--
+-- TOC entry 222 (class 1259 OID 98405)
+-- Name: messages; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.messages (
+    id integer NOT NULL,
+    chat_id integer NOT NULL,
+    sender_id integer NOT NULL,
+    content text NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    image text
+);
+
+
+ALTER TABLE public.messages OWNER TO postgres;
+
+--
+-- TOC entry 221 (class 1259 OID 98404)
+-- Name: messages_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.messages_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.messages_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4819 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: messages_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.messages_id_seq OWNED BY public.messages.id;
+
+
+--
+-- TOC entry 218 (class 1259 OID 98378)
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.users (
+    id integer NOT NULL,
+    username character varying(50) NOT NULL,
+    password character varying(255) NOT NULL,
+    birthday date NOT NULL
+);
+
+
+ALTER TABLE public.users OWNER TO postgres;
+
+--
+-- TOC entry 217 (class 1259 OID 98377)
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.users_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.users_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4820 (class 0 OID 0)
+-- Dependencies: 217
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
+-- TOC entry 4652 (class 2604 OID 98390)
+-- Name: chats id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.chats ALTER COLUMN id SET DEFAULT nextval('public.chats_id_seq'::regclass);
+
+
+--
+-- TOC entry 4653 (class 2604 OID 98408)
+-- Name: messages id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.messages ALTER COLUMN id SET DEFAULT nextval('public.messages_id_seq'::regclass);
+
+
+--
+-- TOC entry 4651 (class 2604 OID 98381)
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- TOC entry 4660 (class 2606 OID 98392)
+-- Name: chats chats_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.chats
+    ADD CONSTRAINT chats_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4663 (class 2606 OID 98413)
+-- Name: messages messages_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.messages
+    ADD CONSTRAINT messages_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4656 (class 2606 OID 98383)
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4658 (class 2606 OID 98385)
+-- Name: users users_username_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_username_key UNIQUE (username);
+
+
+--
+-- TOC entry 4661 (class 1259 OID 98403)
+-- Name: idx_chats_users; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_chats_users ON public.chats USING btree (firstuserid, seconduserid);
+
+
+--
+-- TOC entry 4664 (class 2606 OID 98393)
+-- Name: chats chats_firstuserid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.chats
+    ADD CONSTRAINT chats_firstuserid_fkey FOREIGN KEY (firstuserid) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4665 (class 2606 OID 98398)
+-- Name: chats chats_seconduserid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.chats
+    ADD CONSTRAINT chats_seconduserid_fkey FOREIGN KEY (seconduserid) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4666 (class 2606 OID 98414)
+-- Name: messages messages_chat_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.messages
+    ADD CONSTRAINT messages_chat_id_fkey FOREIGN KEY (chat_id) REFERENCES public.chats(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4667 (class 2606 OID 98419)
+-- Name: messages messages_sender_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.messages
+    ADD CONSTRAINT messages_sender_id_fkey FOREIGN KEY (sender_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+-- Completed on 2026-09-08 07:44:34
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict hMpxLeIprNkqAKICVyTm8xGJThXQGJdUg4dXtCe0LLt18qbkElmcrpxggMQ8s1k
+

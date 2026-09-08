@@ -5,6 +5,7 @@ import login from './Routers/LoginSystem/login';
 import chat from './Routers/Chat';
 import con from './Routers/Contacts';
 import cookieParser from "cookie-parser";
+import { Socket } from 'socket.io';
 
 
 const app = express();
